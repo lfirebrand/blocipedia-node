@@ -1,0 +1,19 @@
+{
+  "name": "blocipedia-node",
+  "version": "1.0.0",
+  "description": "A Wikipedia-like application for users to create, collaborate, and share wikis.",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "export NODE_ENV=test && jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lfirebrand/blocipedia-node.git"
+  },
+  "author": "Lexi Zgud",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lfirebrand/blocipedia-node/issues"
+  },
+  "homepage": "https://github.com/lfirebrand/blocipedia-node#readme"
+}
