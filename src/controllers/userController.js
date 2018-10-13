@@ -16,7 +16,7 @@ module.exports = {
         userQueries.createUser(newUser, (err, user) => {
             if (err) {
                 req.flash("error", err);
-                res.redirect("/users/sign_up");
+                res.redirect("/users/signup");
             } else {
 
                 passport.authenticate("local")(req, res, () => {
@@ -24,6 +24,7 @@ module.exports = {
                     res.redirect("/");
                 })
             }
-        });
+        })
+        
     }
 }
