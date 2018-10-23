@@ -6,6 +6,7 @@ module.exports = {
 
             //#3
             if (err) {
+                console.log(err);
                 res.redirect(500, "static/index");
             } else {
                 res.render("wikis/index", {
@@ -27,9 +28,51 @@ module.exports = {
         };
         wikiQueries.addWiki(newWiki, (err, wiki) => {
             if(err){
-                res.redirect(500, "/wikis/new");
+                console.log(err);
+                res.redirect(500, "/wikis/new"); 
             } else {
                 res.redirect(303, `/wikis/${wiki.id}`);
+            }
+        });
+    },
+
+    show(req, res, next){
+        wikiQueries.getWikis(req.params.id, (err, wiki) => {
+            if(err || wiki == null){
+                res.redirect(404, "/");
+            } else {
+                res.render("wikis/show", {wiki});
+            }
+        });
+    },
+
+    destroy(req, res, next){
+        wikiQueries.deleteWiki(req.params.id, (err, wiki) => {
+            if(err){
+                res.redirect(500, `/wikis/${wiki.id}`)
+            } else {
+                res.redirect(303, "/wikis")
+            }
+        });
+    },
+
+    edit(req, res, next){
+        wikiQueries.getWikis(req.params.id, (err, wiki) => {
+            if(err || wiki == null){
+                res.redirect(404, "/");
+            } else {
+                res.render("wikis/edit", {wiki});
+            }
+        });
+    },
+
+    update(req, res, next) {
+        wikiQueries.updateWiki(req.params.id, req.body, (err, wiki) => {
+
+            if (err || wiki == null) {
+                res.redirect(404, `/wikis/${req.params.id}/edit`);
+            } else {
+                res.redirect(`/wikis/${wiki.id}`);
             }
         });
     }

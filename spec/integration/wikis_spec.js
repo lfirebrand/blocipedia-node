@@ -14,7 +14,7 @@ describe("routes : wikis", () => {
 
             Wiki.create({
                     title: "JS Frameworks",
-                    description: "There is a lot of them"
+                    body: "There is a lot of them"
                 })
                 .then((wiki) => {
                     this.wiki = wiki;
@@ -90,4 +90,73 @@ describe("routes : wikis", () => {
             );
         });
     });
+
+    describe("GET /wikis/:id", () => {
+        
+        it("should render a view with the selected wiki", (done) => {
+            request.get(`${base}${this.wiki.id}`, (err, res, body) => {
+                expect(err).toBeNull();
+                expect(body).toContain("JS Frameworks");
+                done();
+            });
+        });
+    });
+
+    describe("POST /wikis/:id/destroy", () => {
+
+        it("should delete the wiki with the associate ID", (done) => {
+            Wiki.all()
+            .then((wikis) => {
+                const wikiCountBeforeDelete = wikis.length;
+
+                expect(wikiCountBeforeDelete).toBe(1);
+
+                request.post(`${base}${this.wiki.id}/destroy`, (err, res, body) => {
+                    Wiki.all()
+                    .then((wikis) => {
+                        expect(err).toBeNull();
+                        expect(wikis.length).toBe(wikiCountBeforeDelete -1);
+                        done();
+                    })
+                });
+            });
+        });
+    });
+
+    describe("GET /wikis/:id/edit", () => {
+        it("should render a view with an edit wiki form", (done) => {
+            request.get(`${base}${this.wiki.id}/edit`, (err, res, body) => {
+                expect(err).toBeNull();
+                expect(body).toContain("Edit Wiki");
+                expect(body).toContain("JS Frameworks");
+                done();
+            });
+        });
+    });
+
+    describe("POST /wikis/:id/update", () => {
+        it("should update the wiki with the given values", (done) => {
+            const options = {
+                url: `${base}${this.wiki.id}/update`, 
+                form: {
+                    title: "Javascript Frameworks",
+                    body: "There are a lot of them"
+                }
+            };
+
+            request.post(options, 
+                (err, res, body) => {
+                    expect(err).toBeNull();
+
+                    Wiki.findOne({
+                        where: { id: this.wiki.id }
+                    })
+                    .then((wiki) => {
+                        expect(wiki.title).toBe("Javascript Frameworks");
+                        done();
+                    });
+                });
+        });
+    });
+    
 });
