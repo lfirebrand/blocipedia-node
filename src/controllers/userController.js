@@ -1,7 +1,7 @@
  const userQueries = require("../db/queries.users.js");
  const passport = require("passport");
  const User = require("../db/models/").User;
- const stripe = require("stripe")(process.env.STRIPE_API_KEY);
+ const stripe = require("stripe")("sk_test_yxdNiFMtufkOmsavSK7Fg9K8");
 
 module.exports = {
     signUp(req, res, next) {
