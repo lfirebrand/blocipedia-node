@@ -3,6 +3,7 @@ const server = require("../../src/server");
 const base = "http://localhost:3000/users/";
 const User = require("../../src/db/models").User;
 const sequelize = require("../../src/db/models/index").sequelize;
+const Wiki = require("../../src/db/models").Wiki;
 
 describe("routes : users", () => {
 
@@ -111,5 +112,44 @@ describe("routes : users", () => {
         });
 
     });
+
+    describe("GET /users/:id", () => {
+        beforeEach((done) => {
+            this.user;
+            this.wiki;
+
+            User.create({
+                name: "lfirebrand",
+                email: "test@example.com",
+                password: "Spidey187"
+            })
+            .then((res) => {
+                this.user = res;
+
+                Wiki.create({
+                    title: "Sample Wiki",
+                    body: "This is a sample wiki",
+                    userId: this.user.id,
+                    private: null, 
+                        include: {
+                            model: Wiki,
+                            as: "wikis"
+                        }
+                })
+            })
+        });
+
+        it("should present a list of comments and posts a user has created", (done) => {
+
+        request.get(`${base}${this.user.id}`, (err, res, body) => {
+
+            // #5
+            expect(body).toContain("Sample Wiki");
+            expect(body).toContain("This is a sample wiki")
+            done();
+        });
+
+        });
+        });
 
 });
