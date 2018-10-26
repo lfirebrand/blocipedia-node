@@ -58,7 +58,7 @@ module.exports = {
                 req.flash("notice", "No user found with that ID.");
                 res.redirect("/");
             } else {
-                res.render("/users/show", {user});
+                res.render("users/show", {user});
             }
         });
     },
@@ -69,7 +69,7 @@ module.exports = {
                 req.flash("notice", "No user found with that ID.");
                 res.render("/");
             } else {
-                res.render("/users/upgrade", {users});
+                res.render("users/upgrade", {user});
             }
         });
     },
@@ -92,15 +92,15 @@ module.exports = {
                     if(result){
                         userQueries.toggleRole(user);
                         req.flash("notice", "Congrats! Upgrade successful!");
-                        res.redirect("/");
+                        res.redirect("/wikis");
                     } else {
                         req.flash("notice", "Upgrade unsuccessful.");
-                        res.redirect("/users/show", {user});
+                        res.redirect("users/show", {user});
                     }
                 })
             } else {
                 req.flash("notice", "Upgrade unsuccessful.");
-                res.redirect("/users/upgrade");
+                res.redirect("users/upgrade");
             }
         })
     },
@@ -111,7 +111,7 @@ module.exports = {
                 req.flash("notice", "No user found with that ID.");
                 res.redirect("/");
             } else {
-                res.render("/users/downgrade", {user});
+                res.render("users/downgrade", {user});
             }
         });
     },
@@ -124,10 +124,10 @@ module.exports = {
             if(user){
                 userQueries.toggleRole(user);
                 req.flash("notice", "Your downgrade was successful!");
-                res.redirect("/");
+                res.redirect("/wikis");
             } else {
                 req.flash("notice", "Downgrade unsuccessful.");
-                res.redirect("/users/show", {user});
+                res.redirect("users/show", {user});
             }
         })
     }

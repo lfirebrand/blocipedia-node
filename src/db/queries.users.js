@@ -41,7 +41,7 @@ module.exports = {
 
     toggleRole(user){
         User.findOne({
-            where: {name: user.name}
+            where: {email: user.email}
         })
         .then((user) => {
             if(user.role == "standard"){
