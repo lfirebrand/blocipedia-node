@@ -86,7 +86,7 @@ module.exports = {
                     amount: 1500,
                     currency: 'usd',
                     description: 'Upgrade to premium',
-                    source: token
+                    source: token,
                 })
                 .then((result) => {
                     if(result){
