@@ -21,6 +21,13 @@
                 <label for="body">Body</label>
                 <textarea rows="4" class="form-control" name="body" placeholder="Enter text"></textarea>
             </div>
+
+     <% if(currentUser.isPremium() || currentUser.isAdmin()) { %>
+            <div class="form-group">
+                <label for="private">Make this wiki private?</label>
+                <input type="checkbox" class="form-control" name="private">
+            </div>
+    <% } %>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 

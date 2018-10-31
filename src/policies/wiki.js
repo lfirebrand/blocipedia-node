@@ -11,14 +11,10 @@ module.exports = class WikiPolicy extends ApplicationPolicy {
     }
     
     edit() {
-        return this._isAdmin() || this._isPremium() || this._isStandard();
+        return this.user != null;
     }
 
     update() {
         return this.edit();
-    }
-
-    destroy() {
-        return this._isAdmin();
     }
 }

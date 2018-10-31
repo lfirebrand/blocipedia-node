@@ -1,4 +1,5 @@
  const userQueries = require("../db/queries.users.js");
+ const wikiQueries = require("../db/queries.wikis.js");
  const passport = require("passport");
  const User = require("../db/models/").User;
  const stripe = require("stripe")("sk_test_yxdNiFMtufkOmsavSK7Fg9K8");
@@ -116,19 +117,20 @@ module.exports = {
         });
     },
 
-    downgrade(req, res, next){
-        User.findOne({
-            where: {id: req.params.id}
-        })
-        .then((user) => {
-            if(user){
-                userQueries.toggleRole(user);
-                req.flash("notice", "Your downgrade was successful!");
-                res.redirect("/wikis");
-            } else {
+    downgrade(req, res, next) {
+        userQueries.getUser(req.params.id, (err, user) => {
+            if (err || user === undefined) {
                 req.flash("notice", "Downgrade unsuccessful.");
-                res.redirect("users/show", {user});
+                res.redirect("/users/show", {
+                    user
+                });
+            } else {
+                wikiQueries.togglePrivacy(user);
+                userQueries.toggleRole(user);
+                req.flash("notice", "Downgrade successful!");
+                res.redirect("/");
             }
         })
     }
+
 }
