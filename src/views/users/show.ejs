@@ -15,6 +15,10 @@
         <h3>Your account status is:
             <%= user.role %>
         </h3>
+        <hr>
+        <h3>Your current wiki collaborations:</h3>
+        <a href="/users/collaborations" class="btn btn-primary">See Collaborations</a>
+
         <!-- If currentUser == "standard" -->
         <a href="/users/<%= user.id %>/upgrade" class="btn btn-warning">Upgrade to Premium</a>
         <p>DYK -- If you upgrade to Premium, you can edit public wikis, and create and read private wikis.</p>
