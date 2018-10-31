@@ -14,7 +14,7 @@
         <% include ../static/partials/messages.ejs %>
 
         <h1>
-            <%= wiki.title %>
+            <%- wiki.title %>
         </h1>
 
         <% if(wiki.private) { %>
@@ -33,7 +33,7 @@
         <% } %>
 
         <p>
-            <%= wiki.body %>
+            <%- wiki.body %>
         </p>
 
     </main>
