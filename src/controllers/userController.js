@@ -64,73 +64,105 @@ module.exports = {
         });
     },
 
-    showUpgradePage(req, res, next){
-        userQueries.getUser(req.params.id, (err, user) => {
-            if(err || user === undefined){
-                req.flash("notice", "No user found with that ID.");
-                res.render("/");
-            } else {
-                res.render("users/upgrade", {user});
-            }
-        });
-    },
+   // showUpgradePage(req, res, next){
+   //     userQueries.getUser(req.params.id, (err, user) => {
+   //         if(err || user === undefined){
+     //           req.flash("notice", "No user found with that ID.");
+       //         res.render("/");
+         //   } else {
+           //     res.render("users/upgrade", {user});
+         //   }
+       // });
+    //},
 
-    upgrade(req, res, next){
-        const token = req.body.stripeToken;
-        const email = req.body.stripeEmail;
-        User.findOne({
-            where: {email: email}
-        })
-        .then((user) => {
-            if(user){
-                const charge = stripe.charges.create({
-                    amount: 1500,
-                    currency: 'usd',
-                    description: 'Upgrade to premium',
-                    source: token,
-                })
-                .then((result) => {
-                    if(result){
-                        userQueries.toggleRole(user);
-                        req.flash("notice", "Congrats! Upgrade successful!");
-                        res.redirect("/wikis");
-                    } else {
-                        req.flash("notice", "Upgrade unsuccessful.");
-                        res.redirect("users/show", {user});
-                    }
-                })
-            } else {
-                req.flash("notice", "Upgrade unsuccessful.");
-                res.redirect("users/upgrade");
-            }
-        })
-    },
+    //upgrade(req, res, next){
+      //  const token = req.body.stripeToken;
+        //const email = req.body.stripeEmail;
+       // User.findOne({
+      //      where: {email: email}
+      //  })
+      //  .then((user) => {
+       //     if(user){
+       //         const charge = stripe.charges.create({
+        //            amount: 1500,
+          //          currency: 'usd',
+            //        description: 'Upgrade to premium',
+            //        source: token,
+           //     })
+           //     .then((result) => {
+             //       if(result){
+             //           userQueries.toggleRole(user);
+               //         req.flash("notice", "Congrats! Upgrade successful!");
+              //          res.redirect("/wikis");
+                //    } else {
+               //         req.flash("notice", "Upgrade unsuccessful.");
+               //         res.redirect("users/show", {user});
+           //         }
+         //       })
+       //     } else {
+      //          req.flash("notice", "Upgrade unsuccessful.");
+        //        res.redirect("users/upgrade");
+       //     }
+      //  })
+   // },
     
-    showDowngradePage(req, res, next){
-        userQueries.getUser(req.params.id, (err, user) => {
-            if(err || user === undefined){
-                req.flash("notice", "No user found with that ID.");
-                res.redirect("/");
-            } else {
-                res.render("users/downgrade", {user});
-            }
-        });
-    },
+ //   showDowngradePage(req, res, next){
+   //     userQueries.getUser(req.params.id, (err, user) => {
+     //       if(err || user === undefined){
+       //         req.flash("notice", "No user found with that ID.");
+         //       res.redirect("/");
+           // } else {
+             //   res.render("users/downgrade", {user});
+         //   }
+      //  });
+   // },
 
-    downgrade(req, res, next) {
-        userQueries.getUser(req.params.id, (err, user) => {
-            if (err || user === undefined) {
-                req.flash("notice", "Downgrade unsuccessful.");
-                res.redirect("/users/show", {
-                    user
+   // downgrade(req, res, next) {
+     //   userQueries.getUser(req.params.id, (err, user) => {
+       //     if (err || user === undefined) {
+         //       req.flash("notice", "Downgrade unsuccessful.");
+           //     res.redirect("/users/show", {
+             //       user
+         //       });
+        //    } else {
+         //       wikiQueries.togglePrivacy(user);
+           //     userQueries.toggleRole(user);
+             //   req.flash("notice", "Downgrade successful!");
+           //     res.redirect("/");
+           // }
+ //       })
+  //  }
+    upgrade(req, res, next) {
+            res.render('users/upgrade', {
+                publicKey
+            });
+        },
+
+        payment(req, res, next) {
+            stripe.customers
+                .create({
+                    email: req.body.stripeEmail,
+                    source: req.body.stripeToken,
+                })
+                .then(customer => {
+                    stripe.charges.create({
+                        amount: 1500,
+                        description: 'Blocipedia Premium Membership Test Fee',
+                        currency: 'USD',
+                        customer: customer.id,
+                    });
+                })
+                .then(charge => {
+                    userQueries.upgrade(req.user.dataValues.id);
+                    res.redirect('/');
                 });
-            } else {
-                wikiQueries.togglePrivacy(user);
-                userQueries.toggleRole(user);
-                req.flash("notice", "Downgrade successful!");
-                res.redirect("/");
-            }
-        })
-    }
+        },
+
+        downgrade(req, res, next) {
+            userQueries.downgrade(req.user.dataValues.id);
+          //  wikiQueries.privateToPublic(req.user.dataValues.id);
+            req.flash('notice', 'You are no longer a premium user and your private wikis are now public.');
+            res.redirect('/');
+        }
 
 }
