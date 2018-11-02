@@ -1,64 +1,73 @@
+const User = require('./models').User;
+const Wiki = require('./models').Wiki;
+const Collaborator = require('./models').Collaborator;
 const Authorizer = require("../policies/application");
-const User = require("./models").User;
-const Wiki = require("./models").Wiki;
-const Collaborator = require("./models").Collaborator;
 
 module.exports = {
-    createCollaborator(req, callback){
-        User.findOne({
-            where: {
-                name: req.body.collaborator
-            }
-        })
-        .then((user) => {
-            if(!user){
-                return callback("User does not exist.")
-            }
-            Collaborator.findOne({
-                where: {
-                    userId: user.id,
-                    wikiId: req.params.wikiId
-                }
-            })
-            .then((collaborator) => {
-                if(collaborator) {
-                    return callback("Collaborator already assigned to this wiki.")
-                }
-                let newCollaborator = {
-                    userId: user.id,
-                    wikiId: req.params.wikiId
-                };
-                console.log(newCollaborator);
-                return Collaborator.create(newCollaborator)
-                .then((collaborator) => {
-                    callback(null, collaborator);
-                })
-                .catch((err) => {
-                    callback(err, null);
-                })
-            })
-        })
-    },
 
-    deleteCollaborator(req, callback){
-        let userId = req.body.collaborator;
-        let wikiId = req.params.wikiId;
-        const authorized = new Authorizer(req.user, wiki, userId).destroy();
-        if(authorized){
-            Collaborator.destroy({
+    add(req, callback) {
+        if (req.user.name == req.body.collaborator) {
+            return callback("Oh no! You can't add yourself to collaborators!");
+        }
+        User.findAll({
                 where: {
-                    userId: userId,
-                    wikiId: wikiId
+                    name: req.body.collaborator
                 }
             })
-            .then((deletedRecordsCount) => {
-                callback(null, deletedRecordsCount);
+            .then((users) => {
+                if (!users[0]) {
+                    return callback("User is not found.");
+                }
+                Collaborator.findAll({
+                        where: {
+                            userId: users[0].id,
+                            wikiId: req.params.wikiId,
+                        }
+                    })
+                    .then((collaborators) => {
+                        if (collaborators.length != 0) {
+                            return callback(`${req.body.collaborator} is already a collaborator.`);
+                        }
+                        let newCollaborator = {
+                            userId: users[0].id,
+                            wikiId: req.params.wikiId
+                        };
+                        return Collaborator.create(newCollaborator)
+                            .then((collaborator) => {
+                                callback(null, collaborator);
+                            })
+                            .catch((err) => {
+                                callback(err, null);
+                            })
+                    })
+                    .catch((err) => {
+                        callback(err, null);
+                    })
             })
             .catch((err) => {
-                callback(err);
-            });
+                callback(err, null);
+            })
+    },
+    
+    remove(req, callback) {
+        let collaboratorId = req.body.collaborator;
+        let wikiId = req.params.wikiId;
+        const authorized = new Authorizer(req.user, wiki, collaboratorId).destroy();
+        if (authorized) {
+            Collaborator.destroy({
+                    where: {
+                        userId: collaboratorId,
+                        wikiId: wikiId
+                    }
+                })
+                .then((deletedRecordsCount) => {
+                    callback(null, deletedRecordsCount);
+                })
+                .catch((err) => {
+                    callback(err);
+                });
         } else {
-            req.flash("notice", "You are not authorized to do that.")
+            req.flash("notice", "You are not authorized to do that.");
             callback(401);
         }
     }

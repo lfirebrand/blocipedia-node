@@ -1,9 +1,20 @@
-const Authorizer = require('../policies/application');
+//const express = require('express');
+//const router = express.Router();
 const wikiQueries = require('../db/queries.wikis.js');
-const collaboratorQueries = require('../db/queries.collaborators.js');
+const collaboratorQueries = require("../db/queries.collaborators.js");
+const Authorizer = require('../policies/application');
 
 module.exports = {
-    show(req, res, next) {
+    add(req, res, next) {
+        collaboratorQueries.add(req, (err, collaborator) => {
+            if (err) {
+                req.flash("error", err);
+            }
+            res.redirect(req.headers.referrer);
+        });
+    },
+
+    edit(req, res, next) {
         wikiQueries.getWiki(req.params.wikiId, (err, result) => {
             wiki = result["wiki"];
             collaborators = result["collaborators"];
@@ -12,36 +23,29 @@ module.exports = {
             } else {
                 const authorized = new Authorizer(req.user, wiki, collaborators).edit();
                 if (authorized) {
-                    res.render("collaborators/show", {
+                    res.render("collaborators/edit", {
                         wiki,
                         collaborators
                     });
                 } else {
-                    req.flash("notice", "You are not authorized to do that.");
-                    res.redirect(`/wikis/${req.params.wikiId}`)
+                    req.flash("You are not authorized to do that.");
+                    res.redirect(`/wikis/${req.params.wikiId}`);
                 }
             }
         });
     },
-    create(req, res, next) {
-        collaboratorQueries.createCollaborator(req, (err, collaborator) => {
-            if (err) {
-                req.flash("error", err);
-            }
-            res.redirect(req.headers.referer);
-        });
-    },
-    delete(req, res, next) {
+
+    remove(req, res, next) {
         if (req.user) {
-            collaboratorQueries.deleteCollaborator(req, (err, collaborator) => {
+            collaboratorQueries.remove(req, (err, collaborator) => {
                 if (err) {
                     req.flash("error", err);
                 }
-                res.redirect(req.headers.referer);
+                res.redirect(req.headers.referrer);
             });
         } else {
-            req.flash("notice", "You must be signed in to do that");
-            res.redirect(req.headers.referer);
+            req.flash("notice", "You must be signed in to remove Collaborators!");
+            res.redirect(req.headers.referrer);
         }
     }
 }

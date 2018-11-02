@@ -108,7 +108,7 @@ module.exports = {
     
     showDowngradePage(req, res, next){
         userQueries.getUser(req.params.id, (err, user) => {
-            if(err || user === undefined){
+            if(err || user == undefined){
                 req.flash("notice", "No user found with that ID.");
                 res.redirect("/");
             } else {

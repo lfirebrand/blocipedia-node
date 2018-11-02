@@ -18,7 +18,7 @@
         <p>Ready to upgrade? You must be a baller.</p>
         
 
-<form action="/users/ <%=user.id %>/upgrade" method="POST">
+<form action="/users/ <%=currentUser.id %>/upgrade" method="POST">
     <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="pk_test_YCeYlwNVKAI090sGs8BkQe0d"
         data-amount="1500" data-name="Blocipedia" data-description="Testing payment" data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
         data-locale="auto">

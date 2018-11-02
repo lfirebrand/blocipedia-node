@@ -33,25 +33,25 @@ module.exports = {
         })
     },
 
-    getWikis(id, callback){
-        let result = {};
+    getWiki(id, callback){
+      let result = {};
+      
         return Wiki.findById(id)
         .then((wiki) => {
             if(!wiki){
-                callback(err);
+                callback(404);
             } else {
-                result["wiki"] = wiki;
-                console.log(wiki);
+                result['wiki'] = wiki;
                 Collaborator.scope({method: ["collaboratorsFor", id]}).all()
                 .then((collaborators) => {
                     result["collaborators"] = collaborators;
                     callback(null, result);
-                })
+                });
             }
         })
         .catch((err) => {
             callback(err);
-        })
+        });
     },
 
     deleteWiki(req, callback){

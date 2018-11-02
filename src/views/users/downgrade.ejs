@@ -16,7 +16,7 @@
             <%= user.role %>
         </h3>
         <p>Ready to downgrade? We're sad to see you go...</p>
-        <form action="/users/<%= user.id %>/downgrade" method="POST">
+        <form action="/users/<%= currentUser.id %>/downgrade" method="POST">
             <button type="Submit" class="btn btn-warning">Confirm account downgrade</button>
         </form>
     </main>

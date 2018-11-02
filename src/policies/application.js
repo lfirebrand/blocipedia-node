@@ -1,9 +1,9 @@
 module.exports = class ApplicationPolicy {
 
-    constructor(user, record, collaborators) {
+    constructor(user, record, collaborator) {
         this.user = user;
         this.record = record;
-        this.collaborators = collaborators;
+        this.collaborators = collaborator;
     }
 
     _isOwner() {
@@ -17,6 +17,10 @@ module.exports = class ApplicationPolicy {
 
     _isStandard() {
         return this.user && this.user.role == "standard";
+    }
+
+    _isPremium() {
+        return this.user && this.user.role == "premium";
     }
 
     new() {

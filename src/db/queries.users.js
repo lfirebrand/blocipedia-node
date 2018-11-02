@@ -30,24 +30,26 @@ module.exports = {
             })
     },
 
-    getUser(id, callback){
-       let result = {};
-       User.findById(id)
-       .then((user) => {
-           if(!user){
-               callback(404);
-           } else {
-               result["user"] = user;
-               Collaborator.scope({method: ["userCollaborationsFor", id]}).all()
-               .then((collaborations) => {
-                   result["collaborations"] = collaborations;
-                   callback(null, result);
-               })
-               .catch((err) => {
-                   callback(err);
-               })
-           }
-       })
+    getUser(id, callback) {
+        let result = {};
+        User.findById(id)
+            .then((user) => {
+                if (!user) {
+                    callback(404);
+                } else {
+                    result["user"] = user;
+                    Collaborator.scope({
+                            method: ["collaborationsFor", id]
+                        }).all()
+                        .then((collaborations) => {
+                            result["collaborations"] = collaborations;
+                            callback(null, result);
+                        })
+                        .catch((err) => {
+                            callback(err);
+                        })
+                }
+            })
     },
 
     toggleRole(user){
@@ -59,7 +61,7 @@ module.exports = {
                 user.update({
                     role: "premium"
                 });
-            } else if(user.role == "premium"){
+            } else if (user.role == "premium"){
                 user.update({
                     role: "standard"
                 });
