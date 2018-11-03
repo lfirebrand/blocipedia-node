@@ -15,6 +15,7 @@ router.get("/users/:id", userController.show);
 //router.post("/users/:id/downgrade", userController.downgrade);
 router.post('/users/:id/upgrade', userController.payment);
 router.post('/users/:id/downgrade', userController.downgrade);
+router.get("/users/:id/collaborations", userController.showCollaborations);
 
 
 

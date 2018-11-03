@@ -15,27 +15,38 @@
 
         <!-- Jumbotron Header -->
         <header class="jumbotron my-4">
-            <h1 class="display-3">Welcome to Blocipedia</h1>
-            <p class="lead">Your personalized wiki, your way.</p>
-            <a href="/users/signup" class="btn btn-primary btn-lg">Sign up</a>
+            <h1 class="display-3">Welcome to Lexipedia</h1>
+            <p class="lead">An application for collaborative content. Your wiki, your way.</p>
         </header>
 
         <!-- Page Features -->
         <section class="row text-center">
 
             <section class="col-lg-4">
-                <h4 class="card-title">Create</h4>
-                <p class="card-text">Share your thoughts about subjects that are important to you.</p>
+                <h4 class="card-title">Create Wikis</h4>
+                <p class="card-text">Create Wikis to share ideas and knowledge.</p>
+                <a href="/users/sign_up" class="btn btn-primary btn-lg">Sign Up</a>
             </section>
 
             <section class="col-lg-4">
-                <h4 class="card-title">Collaborate</h4>
+                <h4 class="card-title">Get Collaborative</h4>
                 <p class="card-text">With friends, family, teammates, even your dog (if your dog can type).</p>
+
+            <% if(currentUser) { %>
+            <a href="/users/<%= currentUser.id %>/collaborations" class="btn btn-primary btn-lg">See Collaborations</a>
+            <% } %>
             </section>
 
             <section class="col-lg-4">
-                <h4 class="card-title">Share</h4>
-                <p class="card-text">Share your ideas. Get feedback.</p>
+                <h4 class="card-title">Create Private Wikis</h4>
+                <p class="card-text">Join the Premium community to share and create private wikis.</p>
+
+        <% if(currentUser && currentUser.role != "standard") { %>
+        <a href="/wikis/private" class="btn btn-primary btn-lg">See Private Wikis</a>
+        <% } %>
+        <% if(currentUser && currentUser.role == "standard") { %>
+        <a href="/users/<%= currentUser.id %>" class="btn btn-primary btn-lg">Upgrade to Premium</a>
+        <% } %>
             </section>
 
         </section>

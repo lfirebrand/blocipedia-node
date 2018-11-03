@@ -28,7 +28,7 @@ module.exports = class ApplicationPolicy {
 
     _isPrivate() {
         return this.record.private === true;
-    }
+    } 
     
     new() {
         return this.user != null;
