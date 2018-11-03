@@ -18,6 +18,18 @@ module.exports = class ApplicationPolicy {
         return this.user && this.user.role == "standard";
     }
 
+    _isPremium() {
+        return this.user && this.user.role == "premium";
+    }
+
+    _isPublic() {
+        return this.record.private === false;
+    }
+
+    _isPrivate() {
+        return this.record.private === true;
+    }
+    
     new() {
         return this.user != null;
     }

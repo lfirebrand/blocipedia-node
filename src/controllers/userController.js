@@ -160,6 +160,7 @@ module.exports = {
 
         downgrade(req, res, next) {
             userQueries.downgrade(req.user.dataValues.id);
+            wikiQueries.makePublic(req.user.dataValues.id); 
           //  wikiQueries.privateToPublic(req.user.dataValues.id);
             req.flash('notice', 'You are no longer a premium user and your private wikis are now public.');
             res.redirect('/');

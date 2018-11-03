@@ -90,16 +90,32 @@ module.exports = {
         });
     },
 
-    togglePrivacy(user){
-        Wiki.findAll({
-            where: { userId: user.id}
-        })
-        .then((wikis) => {
-            wikis.forEach((wiki) => {
-                wiki.update({
-                    private: false
-                })
-            })
-        })
-    }
+  //  togglePrivacy(user){
+  //      Wiki.findAll({
+ //           where: { userId: user.id}
+ //       })
+//        .then((wikis) => {
+ //           wikis.forEach((wiki) => {
+  //              wiki.update({
+ //                   private: false
+//                })
+//            })
+ //       })
+ //   }
+
+ makePublic(id) {
+     return Wiki.all()
+         .then((wikis) => {
+             wikis.forEach((wiki) => {
+                 if (wiki.userId == id && wiki.private == true) {
+                     wiki.update({
+                         private: false
+                     })
+                 }
+             })
+         })
+         .catch((err) => {
+             console.log(err);
+         })
+ }
 }
