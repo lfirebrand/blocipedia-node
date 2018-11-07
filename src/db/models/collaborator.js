@@ -1,16 +1,17 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   var Collaborator = sequelize.define('Collaborator', {
-    wikiId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    userId: {
+    wikiId: {
       type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {});
-  Collaborator.associate = function(models) {
+  Collaborator.associate = function (models) {
+    // associations can be defined here
     Collaborator.belongsTo(models.Wiki, {
       foreignKey: "wikiId",
       onDelete: "CASCADE"
@@ -24,8 +25,25 @@ module.exports = (sequelize, DataTypes) => {
         include: [{
           model: models.User
         }],
-        where: {userId: userId},
-        order: [['createdAt', 'ASC']]
+        where: {
+          wikiId: wikiId
+        },
+        order: [
+          ['createdAt', 'ASC']
+        ]
+      }
+    });
+    Collaborator.addScope("userCollaborationsFor", (userId) => {
+      return {
+        include: [{
+          model: models.Wiki
+        }],
+        where: {
+          userId: userId
+        },
+        order: [
+          ["createdAt", "ASC"]
+        ]
       }
     });
   };

@@ -9,22 +9,38 @@
     <% include ../static/partials/navbar.ejs %>
     <main class="container">
         <% include ../static/partials/messages.ejs %>
-        <h1>Hi! Welcome
-            <%= user.name %>
+        <h1>
+            Hello <%= `${currentUser.name}!` %>
         </h1>
-        <h3>Your account status is:
-            <%= user.role %>
+        <h3>
+            <%= `Your email: ${currentUser.email}` %>
         </h3>
+        <h3>
+            <%= `Your current role: ${currentUser.role}` %>
+        </h3>
+        <h4>
+            <%= `Profile created at ${currentUser.createdAt}`%>
+        </h4>
         <hr>
-        <h3>Your current wiki collaborations:</h3>
-        <a href="/users/collaborations" class="btn btn-primary">See Collaborations</a>
-
-        <!-- If currentUser == "standard" -->
-        <a href="/users/<%= user.id %>/upgrade" class="btn btn-warning">Upgrade to Premium</a>
-        <p>DYK -- If you upgrade to Premium, you can edit public wikis, and create and read private wikis.</p>
-        <!-- If currentUser == "premium" -->
-        <a href="/users/<%= user.id %>/downgrade" class="btn btn-warning">Downgrade to Standard</a>
-        <p>With a Standard account, you will no longer be able to edit public wikis, or read and create private wikis.</p>
+        <% if(currentUser && currentUser.role == "standard") { %>
+        <h2>Join Lexipedia as a premium member.</h2>
+        <p>Create private wikis and collaborate with other premium members.<p>
+        <form action="/users/<%=currentUser.id%>/upgrade" method="POST">
+<script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="pk_test_YCeYlwNVKAI090sGs8BkQe0d"
+                data-amount="1500" data-name="Stripe.com" data-description="Example Premium Membership Charge"
+                data-image="https://stripe.com/img/documentation/checkout/marketplace.png" data-locale="auto">
+            </script>
+        </form>
+        <% } else { %>
+        <% if(currentUser.role == "premium"); { %>
+        <h2>Easy Downgrade</h2>
+        <p> We're sad to see you go!</p>
+        <h6>FYI - All of your private Wikis will become public.</h6>
+        <form action="/users/<%=currentUser.id%>/downgrade" method="POST">
+            <button type="submit" class="btn btn-danger">Downgrade your membership</button>
+        </form>
+        <% } %>
+        <% } %>
     </main>
     <% include ../static/partials/baseScripts.ejs %>
 </body>

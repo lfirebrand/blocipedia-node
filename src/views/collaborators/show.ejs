@@ -9,7 +9,6 @@
     <% include ../static/partials/navbar.ejs %>
     <main class="container">
         <% include ../static/partials/messages.ejs %>
-        <% if(wiki.private) { %>
         <h1>Collaborators for
             <%= wiki.title %> Wiki</h1>
         <hr>
@@ -21,7 +20,6 @@
                 <button type="submit" class="btn btn-secondary">Add</button>
             </div>
         </form>
-        <% } %>
         <% } %>
         <% if(collaborators) { %>
         <ul class="list-group">
@@ -40,6 +38,8 @@
             <% }) %>
         </ul>
         <% } %>
+    </main>
+    <% include ../static/partials/baseScripts.ejs %>
 </body>
 
 </html>

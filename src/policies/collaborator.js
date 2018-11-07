@@ -1,2 +1,5 @@
 const ApplicationPolicy = require("./application");
-module.exports = class CollaboratorPolicy extends ApplicationPolicy {}
+
+module.exports = class CollaboratorPolicy extends ApplicationPolicy {
+
+}

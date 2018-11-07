@@ -1,6 +1,6 @@
 const Wiki = require("./models").Wiki;
-const Collaborator = require("./models").Collaborator;
 const User = require("./models").User;
+const Collaborator = require("./models").Collaborator;
 const Authorizer = require("../policies/application");
 
 module.exports = {
@@ -33,25 +33,26 @@ module.exports = {
         })
     },
 
-    getWikis(id, callback){
+    getWikis(id, callback) {
         let result = {};
-        return Wiki.findById(id)
-        .then((wiki) => {
-            if(!wiki){
-                callback(err);
-            } else {
-                result["wiki"] = wiki;
-                console.log(wiki);
-                Collaborator.scope({method: ["collaboratorsFor", id]}).all()
-                .then((collaborators) => {
-                    result["collaborators"] = collaborators;
-                    callback(null, result);
-                })
-            }
-        })
-        .catch((err) => {
-            callback(err);
-        })
+        Wiki.findById(id)
+            .then((wiki) => {
+                if (!wiki) {
+                    callback(404);
+                } else {
+                    result["wiki"] = wiki;
+                    Collaborator.scope({
+                            method: ["collaboratorsFor", id]
+                        }).all()
+                        .then((collaborators) => {
+                            result["collaborators"] = collaborators;
+                            callback(null, result);
+                        })
+                        .catch((err) => {
+                            callback(err);
+                        })
+                }
+            })
     },
 
     deleteWiki(req, callback){
@@ -103,16 +104,32 @@ module.exports = {
         });
     },
 
-    togglePrivacy(user){
-        Wiki.findAll({
-            where: { userId: user.id}
-        })
-        .then((wikis) => {
-            wikis.forEach((wiki) => {
-                wiki.update({
-                    private: false
-                })
-            })
-        })
-    }
+  //  togglePrivacy(user){
+  //      Wiki.findAll({
+ //           where: { userId: user.id}
+ //       })
+//        .then((wikis) => {
+ //           wikis.forEach((wiki) => {
+  //              wiki.update({
+ //                   private: false
+//                })
+//            })
+ //       })
+ //   }
+
+ makePublic(id) {
+     return Wiki.all()
+         .then((wikis) => {
+             wikis.forEach((wiki) => {
+                 if (wiki.userId == id && wiki.private == true) {
+                     wiki.update({
+                         private: false
+                     })
+                 }
+             })
+         })
+         .catch((err) => {
+             console.log(err);
+         })
+ }
 }

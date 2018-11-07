@@ -55,16 +55,18 @@ module.exports = {
         }    
     },
 
-    show(req, res, next){
+    show(req, res, next) {
         wikiQueries.getWikis(req.params.id, (err, result) => {
             wiki = result["wiki"];
             collaborators = result["collaborators"];
-            if(err || wiki == null){
+
+            if (err || result.wiki == null) {
                 res.redirect(404, "/");
             } else {
-                wiki.title = markdown.toHTML(wiki.title);
                 wiki.body = markdown.toHTML(wiki.body);
-                res.render("wikis/show", {wiki});
+                res.render("wikis/show", {
+                    wiki
+                });
             }
         });
     },
@@ -79,25 +81,26 @@ module.exports = {
         });
     },
 
-   edit(req, res, next) {
-           wikiQueries.getWikis(req.params.id, (err, result) => {
-               wiki = result["wiki"];
-               collaborators = result["collaborators"];
-               if (err || wiki == null) {
-                   res.redirect(404, "/");
-               } else {
-                   const authorized = new Authorizer(req.user, wiki, collaborators).edit();
-                   if (authorized) {
-                       res.render("wikis/edit", {
-                           wiki,
-                           collaborators
-                       });
-                   } else {
-                       req.flash("notice", "You are not authorized to do that.");
-                       res.redirect(`/wikis/${req.params.id}`)
-                   }
-               }
-           });
+    edit(req, res, next) {
+        wikiQueries.getWikis(req.params.id, (err, result) => {
+            wiki = result["wiki"];
+            collaborators = result["collaborators"];
+
+            if (err || result.wiki == null) {
+                res.redirect(404, "/");
+            } else {
+                const authorized = new Authorizer(req.user, wiki, collaborators).edit();
+                if (authorized) {
+                    res.render("wikis/edit", {
+                        wiki,
+                        collaborators
+                    });
+                } else {
+                    req.flash("You are not authorized to do that.");
+                    res.redirect(`/wikis/${req.pararms.id}`)
+                }
+            }
+        });
     },
 
     update(req, res, next) {
@@ -109,5 +112,17 @@ module.exports = {
                 res.redirect(`/wikis/${req.params.id}`);
             }
         });
+    },
+
+    private(req, res, next) {
+        wikiQueries.getAllWikis((err, wikis) => {
+            if (err) {
+                res.redirect(500, "static/index");
+            } else {
+                res.render("wikis/private", {
+                    wikis
+                });
+            }
+        })
     }
 }
